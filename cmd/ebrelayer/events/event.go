@@ -37,7 +37,7 @@ func NewLockEvent(contractAbi abi.ABI, eventName string, eventData []byte) LockE
 
 	// Parse the event's attributes as Ethereum network variables
 	event := LockEvent{}
-	err := contractAbi.Unpack(&event, eventName, eventData)
+	err := contractAbi.UnpackIntoInterface(&event, eventName, eventData)
 	if err != nil {
 	    log.Fatal("Unpacking: ", err)
 	}
