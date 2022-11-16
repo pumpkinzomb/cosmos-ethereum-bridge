@@ -1,6 +1,6 @@
 # ETH Bridge Zone
 
-[![CircleCI](https://circleci.com/gh/swishlabsco/cosmos-ethereum-bridge/tree/master.svg?style=svg)](https://circleci.com/gh/swishlabsco/cosmos-ethereum-bridge/tree/master)
+[![CircleCI](https://circleci.com/gh/pumpkinzomb/cosmos-ethereum-bridge/tree/master.svg?style=svg)](https://circleci.com/gh/pumpkinzomb/cosmos-ethereum-bridge/tree/master)
 
 ## Project Summary
 Unidirectional Peggy is the starting point for cross chain value transfers from the Ethereum blockchain to Cosmos-SDK based blockchains as part of the Ethereum Cosmos Bridge project. The system accepts incoming transfers of Ethereum tokens on an Ethereum smart contract, locking them while the transaction is validated and equitable funds issued to the intended recipient on the Cosmos bridge chain.
@@ -65,9 +65,9 @@ These modules can be added to any Cosmos-SDK based chain, but a demo application
 
 ```
 # Clone the repository
-mkdir -p $GOPATH/src/github.com/swishlabsco
-cd $GOPATH/src/github.com/swishlabsco
-git clone https://github.com/swishlabsco/cosmos-ethereum-bridge
+mkdir -p $GOPATH/src/github.com/pumpkinzomb
+cd $GOPATH/src/github.com/pumpkinzomb
+git clone https://github.com/pumpkinzomb/cosmos-ethereum-bridge
 cd cosmos-ethereum-bridge && git checkout master
 
 # Install dep, as well as your dependencies

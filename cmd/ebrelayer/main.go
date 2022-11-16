@@ -22,8 +22,8 @@ import (
 
 	// "golang.org/x/crypto"
 
-	app "github.com/swishlabsco/cosmos-ethereum-bridge"
-	relayer "github.com/swishlabsco/cosmos-ethereum-bridge/cmd/ebrelayer/relayer"
+	app "github.com/pumpkinzomb/cosmos-ethereum-bridge"
+	relayer "github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebrelayer/relayer"
 )
 
 const (

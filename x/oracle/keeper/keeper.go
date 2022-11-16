@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/oracle/types"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

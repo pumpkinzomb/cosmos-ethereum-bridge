@@ -24,9 +24,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/swishlabsco/cosmos-ethereum-bridge/cmd/ebrelayer/contract"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/cmd/ebrelayer/events"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/cmd/ebrelayer/txs"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebrelayer/contract"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebrelayer/events"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebrelayer/txs"
 )
 
 // -------------------------------------------------------------------------

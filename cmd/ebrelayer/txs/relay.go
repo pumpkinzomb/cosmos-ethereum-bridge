@@ -20,8 +20,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/utils"
 
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/ethbridge"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/ethbridge/types"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/types"
 )
 
 func RelayEvent(chainId string, cdc *amino.Codec, validatorAddress sdk.AccAddress, validatorName string, passphrase string, claim *types.EthBridgeClaim) error {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/oracle"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/oracle"
 )
 
 // defines the params for the following queries:

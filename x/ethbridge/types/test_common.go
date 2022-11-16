@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/oracle"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/oracle"
 
 	"github.com/stretchr/testify/require"
 

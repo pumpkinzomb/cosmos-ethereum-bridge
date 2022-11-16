@@ -14,9 +14,9 @@ import (
 
 	clientrest "github.com/cosmos/cosmos-sdk/client/rest"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/ethbridge"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/ethbridge/querier"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/x/ethbridge/types"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/querier"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/types"
 )
 
 const (

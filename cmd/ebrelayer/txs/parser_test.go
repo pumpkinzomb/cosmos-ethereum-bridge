@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"github.com/swishlabsco/cosmos-ethereum-bridge/cmd/ebrelayer/events"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebrelayer/events"
 	"github.com/ethereum/go-ethereum/common"
 )
 

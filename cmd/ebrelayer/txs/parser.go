@@ -15,8 +15,8 @@ import (
   "fmt"
 
   sdk "github.com/cosmos/cosmos-sdk/types"
-  "github.com/swishlabsco/cosmos-ethereum-bridge/cmd/ebrelayer/events"
-  "github.com/swishlabsco/cosmos-ethereum-bridge/x/ethbridge/types"
+  "github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebrelayer/events"
+  "github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/types"
 )
 
 func ParsePayload(validator sdk.AccAddress, event *events.LockEvent) (types.EthBridgeClaim, error) {
