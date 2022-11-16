@@ -3,7 +3,7 @@ module cosmos-ethereum-bridge
 go 1.19
 
 require (
-	github.com/cosmos/cosmos-sdk v0.33.2
+	github.com/cosmos/cosmos-sdk v0.35.0
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/golang/glog v1.0.0
 	github.com/gorilla/mux v1.8.0
@@ -12,12 +12,11 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/go-amino v0.14.1
-	github.com/tendermint/tendermint v0.31.0-dev0
+	github.com/tendermint/tendermint v0.31.5
 )
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
-	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/bartekn/go-bip39 v0.0.0-20171116152956-a05967ea095d // indirect
 	github.com/beorn7/perks v1.0.0 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
@@ -25,11 +24,11 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.1 // indirect
 	github.com/btcsuite/btcutil v0.0.0-20180706230648-ab6388e0c60a // indirect
 	github.com/cosmos/go-bip39 v0.0.0-20180618194314-52158e4697b8 // indirect
-	github.com/cosmos/ledger-cosmos-go v0.9.8 // indirect
+	github.com/cosmos/ledger-cosmos-go v0.10.3 // indirect
+	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
-	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-kit/kit v0.8.0 // indirect
 	github.com/go-logfmt/logfmt v0.4.0 // indirect
@@ -71,7 +70,6 @@ require (
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/zondax/hid v0.9.0 // indirect
-	github.com/zondax/ledger-go v0.8.0 // indirect
 	golang.org/x/crypto v0.2.0 // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
 	golang.org/x/sys v0.2.0 // indirect

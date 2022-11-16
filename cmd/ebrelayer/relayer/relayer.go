@@ -37,7 +37,7 @@ func InitRelayer(cdc *amino.Codec, chainId string, provider string,
 	contractAddress common.Address, eventSig string,
 	validatorFrom string) error {
 
-	validatorAddress, validatorName, err := sdkContext.GetFromFields(validatorFrom)
+	validatorAddress, validatorName, err := sdkContext.GetFromFields(validatorFrom, false)
 	if err != nil {
 		fmt.Printf("failed to get from fields: %v", err)
 		return err
