@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/cosmos/cosmos-sdk v0.33.2
 	github.com/ethereum/go-ethereum v1.10.26
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/gorilla/mux v1.7.1
+	github.com/golang/glog v1.0.0
+	github.com/gorilla/mux v1.8.0
 	github.com/pumpkinzomb/cosmos-ethereum-bridge v0.0.0-20221116051648-a9c14414af29
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.0.3
