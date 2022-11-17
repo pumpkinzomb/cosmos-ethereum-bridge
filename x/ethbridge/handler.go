@@ -12,7 +12,7 @@ import (
 )
 
 // NewHandler returns a handler for "ethbridge" type messages.
-func NewHandler(oracleKeeper oracle.Keeper, bankKeeper bank.Keeper, cdc *codec.Codec, codespace sdk.CodespaceType) sdk.Handler {
+func NewHandler(oracleKeeper oracle.Keeper, bankKeeper bank.Keeper, cdc *codec.Codec, codespace sdk.Codespace) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case MsgMakeEthBridgeClaim:
@@ -25,7 +25,7 @@ func NewHandler(oracleKeeper oracle.Keeper, bankKeeper bank.Keeper, cdc *codec.C
 }
 
 // Handle a message to make a bridge claim
-func handleMsgMakeEthBridgeClaim(ctx sdk.Context, cdc *codec.Codec, oracleKeeper oracle.Keeper, bankKeeper bank.Keeper, msg MsgMakeEthBridgeClaim, codespace sdk.CodespaceType) sdk.Result {
+func handleMsgMakeEthBridgeClaim(ctx sdk.Context, cdc *codec.Codec, oracleKeeper oracle.Keeper, bankKeeper bank.Keeper, msg MsgMakeEthBridgeClaim, codespace sdk.Codespace) sdk.Result {
 	if msg.CosmosReceiver.Empty() {
 		return sdk.ErrInvalidAddress(msg.CosmosReceiver.String()).Result()
 	}

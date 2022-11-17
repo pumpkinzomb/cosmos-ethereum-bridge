@@ -14,18 +14,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	cmtypes "github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/bank"
+	auth"github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingKeeperLib "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	abci "github.com/tendermint/tendermint/abci/types"
-	dbm "github.com/tendermint/tendermint/libs/db"
+	dbm "github.com/tendermint/tm-db"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // CreateTestKeepers greates an OracleKeeper, AccountKeeper and Context to be used for test input
-func CreateTestKeepers(t *testing.T, consensusNeeded float64, validatorPowers []int64) (sdk.Context, auth.AccountKeeper, Keeper, bank.Keeper, []sdk.ValAddress, sdk.Error) {
+func CreateTestKeepers(t *testing.T, consensusNeeded float64, validatorPowers []int64) (sdk.Context, auth.AccountKeeper, Keeper, bank.Keeper, []sdk.ValAddress, error) {
 	keyOracle := sdk.NewKVStoreKey(types.StoreKey)
 	keyAcc := sdk.NewKVStoreKey(auth.StoreKey)
 	keyParams := sdk.NewKVStoreKey(params.StoreKey)
@@ -147,7 +147,7 @@ func createTestPubKeys(numPubKeys int) []crypto.PubKey {
 }
 
 // MakeTestCodec creates a codec used only for testing
-func MakeTestCodec() *codec.Codec {
+func MakeTestCodec() *codec.BinaryMarshaler {
 	var cdc = codec.New()
 	// Register Msgs
 	auth.RegisterCodec(cdc)

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -25,7 +25,7 @@ const (
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, queryRoute string) {
+func RegisterRoutes(cliCtx client.Context, r *mux.Router, cdc *codec.Codec, queryRoute string) {
 	r.HandleFunc(fmt.Sprintf("/%s/prophecies", queryRoute), makeClaimHandler(cdc, cliCtx)).Methods("POST")
 	r.HandleFunc(fmt.Sprintf("/%s/prophecies/{%s}/{%s}", queryRoute, restNonce, restEthereumSender), getProphecyHandler(cdc, cliCtx, queryRoute)).Methods("GET")
 }
@@ -39,7 +39,7 @@ type makeEthClaimReq struct {
 	Amount         string       `json:"amount"`
 }
 
-func makeClaimHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
+func makeClaimHandler(cdc *codec.Codec, cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req makeEthClaimReq
 
@@ -84,7 +84,7 @@ func makeClaimHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerF
 	}
 }
 
-func getProphecyHandler(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func getProphecyHandler(cdc *codec.Codec, cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		nonce := vars[restNonce]

@@ -36,9 +36,3 @@ const (
 
 	TestID = types.TestID
 )
-
-var (
-	ErrProphecyNotFound              = types.ErrProphecyNotFound
-	ErrMinimumConsensusNeededInvalid = types.ErrMinimumConsensusNeededInvalid
-	ErrInvalidIdentifier             = types.ErrInvalidIdentifier
-)

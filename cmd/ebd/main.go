@@ -21,17 +21,17 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/cli"
-	"github.com/tendermint/tendermint/libs/common"
+	"github.com/tendermint/tendermint/libs/os"
 	"github.com/tendermint/tendermint/libs/log"
 	"github.com/tendermint/tendermint/types"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
 
 	app "github.com/pumpkinzomb/cosmos-ethereum-bridge"
 
-	gaiaInit "github.com/cosmos/cosmos-sdk/cmd/gaia/init"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cfg "github.com/tendermint/tendermint/config"
-	dbm "github.com/tendermint/tendermint/libs/db"
+	dbm "github.com/tendermint/tm-db"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
@@ -103,10 +103,10 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
 
 			chainID := viper.GetString(client.FlagChainID)
 			if chainID == "" {
-				chainID = fmt.Sprintf("test-chain-%v", common.RandStr(6))
+				chainID = fmt.Sprintf("test-chain-%v", os.RandStr(6))
 			}
 
-			_, pk, err := gaiaInit.InitializeNodeValidatorFiles(config)
+			_, pk, err := genutil.InitializeNodeValidatorFiles(config)
 			if err != nil {
 				return err
 			}
@@ -114,7 +114,7 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
 			var appState json.RawMessage
 			genFile := config.GenesisFile()
 
-			if !viper.GetBool(flagOverwrite) && common.FileExists(genFile) {
+			if !viper.GetBool(flagOverwrite) && os.FileExists(genFile) {
 				return fmt.Errorf("genesis.json file already exists: %v", genFile)
 			}
 
@@ -134,7 +134,7 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			if err = gaiaInit.ExportGenesisFile(genFile, chainID, []tmtypes.GenesisValidator{validator}, appState); err != nil {
+			if err = genutil.ExportGenesisFile(genFile, chainID, []tmtypes.GenesisValidator{validator}, appState); err != nil {
 				return err
 			}
 
@@ -195,8 +195,8 @@ $ ebd add-genesis-account cosmos1tse7r2fadvlrrgau3pa0ss7cqh55wrv6y9alwh 1000STAK
 			}
 
 			genFile := config.GenesisFile()
-			if !common.FileExists(genFile) {
-				return fmt.Errorf("%s does not exist, run `gaiad init` first", genFile)
+			if !os.FileExists(genFile) {
+				return fmt.Errorf("%s does not exist, run `ubd init` first", genFile)
 			}
 
 			genContents, err := ioutil.ReadFile(genFile)
@@ -224,7 +224,7 @@ $ ebd add-genesis-account cosmos1tse7r2fadvlrrgau3pa0ss7cqh55wrv6y9alwh 1000STAK
 				return err
 			}
 
-			return gaiaInit.ExportGenesisFile(genFile, genDoc.ChainID, genDoc.Validators, appStateJSON)
+			return genutil.ExportGenesisFile(genFile, genDoc.ChainID, genDoc.Validators, appStateJSON)
 		},
 	}
 	cmd.Flags().String(flagVestingAmt, "", "amount of coins for vesting accounts")

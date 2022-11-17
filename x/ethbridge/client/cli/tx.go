@@ -3,14 +3,12 @@ package cli
 import (
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/utils"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtxb "github.com/cosmos/cosmos-sdk/x/auth/client/txbuilder"
 )
 
 // GetCmdMakeEthBridgeClaim is the CLI command for making a claim on an ethereum prophecy
@@ -20,9 +18,11 @@ func GetCmdMakeEthBridgeClaim(cdc *codec.Codec) *cobra.Command {
 		Short: "make a claim on an ethereum prophecy",
 		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc).WithAccountDecoder(cdc)
 
-			txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			if err := cliCtx.EnsureAccountExists(); err != nil {
 				return err
@@ -56,9 +56,8 @@ func GetCmdMakeEthBridgeClaim(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			cliCtx.PrintResponse = true
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
-			return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, []sdk.Msg{msg})
 		},
 	}
 }

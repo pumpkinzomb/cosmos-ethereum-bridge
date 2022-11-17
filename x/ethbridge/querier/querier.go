@@ -18,8 +18,8 @@ const (
 )
 
 // NewQuerier is the module level router for state queries
-func NewQuerier(keeper keep.Keeper, cdc *codec.Codec, codespace sdk.CodespaceType) sdk.Querier {
-	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
+func NewQuerier(keeper keep.Keeper, cdc *codec.Codec, codespace sdk.Codespace) sdk.Querier {
+	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
 		case QueryEthProphecy:
 			return queryEthProphecy(ctx, cdc, req, keeper, codespace)
@@ -29,7 +29,7 @@ func NewQuerier(keeper keep.Keeper, cdc *codec.Codec, codespace sdk.CodespaceTyp
 	}
 }
 
-func queryEthProphecy(ctx sdk.Context, cdc *codec.Codec, req abci.RequestQuery, keeper keep.Keeper, codespace sdk.CodespaceType) (res []byte, err sdk.Error) {
+func queryEthProphecy(ctx sdk.Context, cdc *codec.Codec, req abci.RequestQuery, keeper keep.Keeper, codespace sdk.Codespace) (res []byte, err error) {
 	var params types.QueryEthProphecyParams
 
 	errRes := cdc.UnmarshalJSON(req.Data, &params)
@@ -40,7 +40,7 @@ func queryEthProphecy(ctx sdk.Context, cdc *codec.Codec, req abci.RequestQuery, 
 	id := strconv.Itoa(params.Nonce) + params.EthereumSender
 	prophecy, err := keeper.GetProphecy(ctx, id)
 	if err != nil {
-		return []byte{}, oracletypes.ErrProphecyNotFound(codespace)
+		return []byte{}, ErrProphecyNotFound
 	}
 
 	bridgeClaims, err2 := MapOracleClaimsToEthBridgeClaims(params.Nonce, params.EthereumSender, prophecy.ValidatorClaims, types.CreateEthClaimFromOracleString)
@@ -58,7 +58,7 @@ func queryEthProphecy(ctx sdk.Context, cdc *codec.Codec, req abci.RequestQuery, 
 	return bz, nil
 }
 
-func MapOracleClaimsToEthBridgeClaims(nonce int, ethereumSender string, oracleValidatorClaims map[string]string, f func(int, string, sdk.ValAddress, string) (types.EthBridgeClaim, sdk.Error)) ([]types.EthBridgeClaim, sdk.Error) {
+func MapOracleClaimsToEthBridgeClaims(nonce int, ethereumSender string, oracleValidatorClaims map[string]string, f func(int, string, sdk.ValAddress, string) (types.EthBridgeClaim, error)) ([]types.EthBridgeClaim, error) {
 	mappedClaims := make([]types.EthBridgeClaim, len(oracleValidatorClaims))
 	i := 0
 	for validatorBech32, validatorClaim := range oracleValidatorClaims {

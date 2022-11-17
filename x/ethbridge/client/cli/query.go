@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge"
@@ -18,7 +18,13 @@ func GetCmdGetEthBridgeProphecy(queryRoute string, cdc *codec.Codec) *cobra.Comm
 		Short: "get prophecy",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			queryClient := types.NewQueryClient(clientCtx)
+
+			if err != nil {
+				return err
+			}
 			nonce := args[0]
 
 			nonceString, err := strconv.Atoi(nonce)
@@ -34,6 +40,9 @@ func GetCmdGetEthBridgeProphecy(queryRoute string, cdc *codec.Codec) *cobra.Comm
 			}
 
 			route := fmt.Sprintf("custom/%s/%s", queryRoute, ethbridge.QueryEthProphecy)
+
+			
+
 			res, err := cliCtx.QueryWithData(route, bz)
 			if err != nil {
 				fmt.Printf(err.Error())
@@ -42,7 +51,7 @@ func GetCmdGetEthBridgeProphecy(queryRoute string, cdc *codec.Codec) *cobra.Comm
 
 			var out types.QueryEthProphecyResponse
 			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintOutput(out)
 		},
 	}
 }

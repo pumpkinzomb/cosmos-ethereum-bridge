@@ -3,8 +3,8 @@ package types
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/x/staking"
-
+	"github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -88,12 +88,13 @@ func (prophecy Prophecy) AddClaim(validator sdk.ValAddress, claim string) {
 	prophecy.ValidatorClaims[validatorBech32] = claim
 }
 
-func (prophecy Prophecy) FindHighestClaim(ctx sdk.Context, stakeKeeper staking.Keeper) (string, int64, int64) {
+func (prophecy Prophecy) FindHighestClaim(ctx sdk.Context, stakeKeeper keeper.Keeper) (string, int64, int64) {
 	validators := stakeKeeper.GetBondedValidatorsByPower(ctx)
+	maxValidators := stakeKeeper.MaxValidators(ctx)
 	//Index the validators by address for looking when scanning through claims
-	validatorsByAddress := make(map[string]staking.Validator)
+	validatorsByAddress := make(map[string]types.Validator, maxValidators)
 	for _, validator := range validators {
-		validatorsByAddress[validator.OperatorAddress.String()] = validator
+		validatorsByAddress[validator.OperatorAddress] = validator
 	}
 
 	totalClaimsPower := int64(0)
@@ -102,7 +103,7 @@ func (prophecy Prophecy) FindHighestClaim(ctx sdk.Context, stakeKeeper staking.K
 	for claim, validators := range prophecy.ClaimValidators {
 		claimPower := int64(0)
 		for _, validator := range validators {
-			validatorPower := validatorsByAddress[validator.String()].GetTendermintPower()
+			validatorPower := validatorsByAddress[validator.String()].GetConsensusPower()
 			claimPower += validatorPower
 		}
 		totalClaimsPower += claimPower
