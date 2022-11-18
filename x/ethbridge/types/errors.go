@@ -1,24 +1,15 @@
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// Local code type
-type CodeType = sdk.CodeType
-
-//Exported code type numbers
 const (
-	DefaultCodespace sdk.Codespace = "ethbridge"
-
-	CodeInvalidEthNonce   CodeType = 1
-	CodeInvalidEthAddress CodeType = 2
+	DefaultCodespace = "ethbridge"
 )
 
-func ErrInvalidEthNonce(codespace sdk.Codespace) sdk.Error {
-	return sdk.NewError(codespace, CodeInvalidEthNonce, "invalid ethereum nonce provided, must be >= 0")
-}
-
-func ErrInvalidEthAddress(codespace sdk.Codespace) sdk.Error {
-	return sdk.NewError(codespace, CodeInvalidEthAddress, "invalid ethereum address provided, must be a valid hex-encoded Ethereum address")
-}
+var (
+	ErrInternal          = sdkerrors.Register(ModuleName, 0, "internal")
+	ErrInvalidEthNonce   = sdkerrors.Register(ModuleName, 1, "invalid ethereum nonce provided, must be >= 0")
+	ErrInvalidEthAddress = sdkerrors.Register(ModuleName, 2, "invalid ethereum address provided, must be a valid hex-encoded Ethereum address")
+)

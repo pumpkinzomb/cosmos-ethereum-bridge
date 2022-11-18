@@ -3,8 +3,9 @@ package types
 import (
 	"encoding/json"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/common"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // MsgMakeEthBridgeClaim defines a message for creating claims on the ethereum bridge
@@ -24,15 +25,15 @@ func (msg MsgMakeEthBridgeClaim) Route() string { return RouterKey }
 func (msg MsgMakeEthBridgeClaim) Type() string { return "make_bridge_claim" }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgMakeEthBridgeClaim) ValidateBasic() sdk.Error {
+func (msg MsgMakeEthBridgeClaim) ValidateBasic() error {
 	if msg.EthBridgeClaim.CosmosReceiver.Empty() {
-		return sdk.ErrInvalidAddress(msg.CosmosReceiver.String())
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, msg.CosmosReceiver.String())
 	}
 	if msg.EthBridgeClaim.Nonce < 0 {
-		return ErrInvalidEthNonce(DefaultCodespace)
+		return ErrInvalidEthNonce
 	}
 	if !common.IsValidEthAddress(msg.EthBridgeClaim.EthereumSender) {
-		return ErrInvalidEthAddress(DefaultCodespace)
+		return ErrInvalidEthAddress
 	}
 	return nil
 }

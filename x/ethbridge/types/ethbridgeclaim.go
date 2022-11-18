@@ -2,11 +2,11 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type EthBridgeClaim struct {
@@ -42,7 +42,7 @@ func NewOracleClaim(cosmosReceiver sdk.AccAddress, amount sdk.Coins) OracleClaim
 	}
 }
 
-func CreateOracleClaimFromEthClaim(cdc *codec.Codec, ethClaim EthBridgeClaim) (string, sdk.ValAddress, string) {
+func CreateOracleClaimFromEthClaim(cdc *codec.LegacyAmino, ethClaim EthBridgeClaim) (string, sdk.ValAddress, string) {
 	oracleId := strconv.Itoa(ethClaim.Nonce) + ethClaim.EthereumSender
 	claimContent := NewOracleClaim(ethClaim.CosmosReceiver, ethClaim.Amount)
 	claimBytes, _ := json.Marshal(claimContent)
@@ -51,7 +51,7 @@ func CreateOracleClaimFromEthClaim(cdc *codec.Codec, ethClaim EthBridgeClaim) (s
 	return oracleId, validator, claim
 }
 
-func CreateEthClaimFromOracleString(nonce int, ethereumSender string, validator sdk.ValAddress, oracleClaimString string) (EthBridgeClaim, sdk.Error) {
+func CreateEthClaimFromOracleString(nonce int, ethereumSender string, validator sdk.ValAddress, oracleClaimString string) (EthBridgeClaim, error) {
 	oracleClaim, err := CreateOracleClaimFromOracleString(oracleClaimString)
 	if err != nil {
 		return EthBridgeClaim{}, err
@@ -67,13 +67,13 @@ func CreateEthClaimFromOracleString(nonce int, ethereumSender string, validator 
 	), nil
 }
 
-func CreateOracleClaimFromOracleString(oracleClaimString string) (OracleClaim, sdk.Error) {
+func CreateOracleClaimFromOracleString(oracleClaimString string) (OracleClaim, error) {
 	var oracleClaim OracleClaim
 
 	stringBytes := []byte(oracleClaimString)
 	errRes := json.Unmarshal(stringBytes, &oracleClaim)
 	if errRes != nil {
-		return OracleClaim{}, sdk.ErrInternal(fmt.Sprintf("failed to parse claim: %s", errRes))
+		return OracleClaim{}, sdkerrors.Wrapf(ErrInternal, "failed to parse claim: %s", errRes)
 	}
 
 	return oracleClaim, nil

@@ -6,6 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/types"
 	keep "github.com/pumpkinzomb/cosmos-ethereum-bridge/x/oracle/keeper"
 	oracletypes "github.com/pumpkinzomb/cosmos-ethereum-bridge/x/oracle/types"
@@ -18,29 +19,29 @@ const (
 )
 
 // NewQuerier is the module level router for state queries
-func NewQuerier(keeper keep.Keeper, cdc *codec.Codec, codespace sdk.Codespace) sdk.Querier {
+func NewQuerier(keeper keep.Keeper, cdc *codec.LegacyAmino, codespace string) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
 		case QueryEthProphecy:
 			return queryEthProphecy(ctx, cdc, req, keeper, codespace)
 		default:
-			return nil, sdk.ErrUnknownRequest("unknown ethbridge query endpoint")
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown ethbridge query endpoint")
 		}
 	}
 }
 
-func queryEthProphecy(ctx sdk.Context, cdc *codec.Codec, req abci.RequestQuery, keeper keep.Keeper, codespace sdk.Codespace) (res []byte, err error) {
+func queryEthProphecy(ctx sdk.Context, cdc *codec.LegacyAmino, req abci.RequestQuery, keeper keep.Keeper, codespace string) (res []byte, err error) {
 	var params types.QueryEthProphecyParams
 
 	errRes := cdc.UnmarshalJSON(req.Data, &params)
 	if errRes != nil {
-		return []byte{}, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+		return []byte{}, sdkerrors.Wrapf(types.ErrInternal, fmt.Sprintf("failed to parse params: %s", err))
 	}
 
 	id := strconv.Itoa(params.Nonce) + params.EthereumSender
 	prophecy, err := keeper.GetProphecy(ctx, id)
 	if err != nil {
-		return []byte{}, ErrProphecyNotFound
+		return []byte{}, oracletypes.ErrProphecyNotFound
 	}
 
 	bridgeClaims, err2 := MapOracleClaimsToEthBridgeClaims(params.Nonce, params.EthereumSender, prophecy.ValidatorClaims, types.CreateEthClaimFromOracleString)
@@ -64,7 +65,7 @@ func MapOracleClaimsToEthBridgeClaims(nonce int, ethereumSender string, oracleVa
 	for validatorBech32, validatorClaim := range oracleValidatorClaims {
 		validatorAddress, parseErr := sdk.ValAddressFromBech32(validatorBech32)
 		if parseErr != nil {
-			return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse claim: %s", parseErr))
+			return nil, sdkerrors.Wrapf(types.ErrInternal, fmt.Sprintf("failed to parse claim: %s", parseErr))
 		}
 		mappedClaim, err := f(nonce, ethereumSender, validatorAddress, validatorClaim)
 		if err != nil {

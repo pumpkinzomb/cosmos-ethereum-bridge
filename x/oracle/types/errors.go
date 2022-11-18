@@ -4,7 +4,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-//Exported code type numbers
+const DefaultCodespace = "oracle"
+
 var (
 	ErrProphecyNotFound              = sdkerrors.Register(ModuleName, 1, "prophecy with given id not found")
 	ErrMinimumConsensusNeededInvalid = sdkerrors.Register(ModuleName, 2, "minimum consensus proportion of validator staking power must be > 0 and <= 1")
