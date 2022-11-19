@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	eb "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app"
+	ebapp "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app"
 
 	"github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app/helpers"
 	"github.com/stretchr/testify/require"
@@ -41,7 +41,7 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 		}
 	}()
 
-	app := eb.NewEthereumbridgeApp(logger, db, nil, true, map[int64]bool{}, eb.DefaultNodeHome, simapp.FlagPeriodValue, eb.MakeEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
+	app := ebapp.NewEthereumbridgeApp(logger, db, nil, true, map[int64]bool{}, ebapp.DefaultNodeHome, simapp.FlagPeriodValue, ebapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
 
 	// Run randomized simulation:w
 	_, simParams, simErr := simulation.SimulateFromSeed(
@@ -106,7 +106,7 @@ func TestAppStateDeterminism(t *testing.T) {
 			}
 
 			db := dbm.NewMemDB()
-			app := eb.NewEthereumbridgeApp(logger, db, nil, true, map[int64]bool{}, eb.DefaultNodeHome, simapp.FlagPeriodValue, eb.MakeEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
+			app := ebapp.NewEthereumbridgeApp(logger, db, nil, true, map[int64]bool{}, ebapp.DefaultNodeHome, simapp.FlagPeriodValue, ebapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
 
 			fmt.Printf(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",

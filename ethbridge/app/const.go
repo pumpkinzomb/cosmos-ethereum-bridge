@@ -1,8 +1,8 @@
-package gaia
+package ethbridge
 
 //nolint: gosec
 const (
-	appName     = "GaiaApp"
+	appName     = "EthereumbridgeApp"
 	upgradeName = "v7-Theta"
 
 	authzMsgExec                        = "/cosmos.authz.v1beta1.MsgExec"

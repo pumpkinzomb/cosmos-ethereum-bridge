@@ -32,14 +32,14 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	eb "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app"
+	ebapp "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app"
 	params "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
-	encodingConfig := eb.MakeEncodingConfig()
+	encodingConfig := ebapp.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
 		WithCodec(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
@@ -47,7 +47,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
-		WithHomeDir(eb.DefaultNodeHome).
+		WithHomeDir(ebapp.DefaultNodeHome).
 		WithViper("")
 
 	rootCmd := &cobra.Command{
@@ -99,13 +99,13 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	cfg.Seal()
 
 	rootCmd.AddCommand(
-		genutilcli.InitCmd(eb.ModuleBasics, eb.DefaultNodeHome),
-		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, eb.DefaultNodeHome),
-		genutilcli.GenTxCmd(eb.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, eb.DefaultNodeHome),
-		genutilcli.ValidateGenesisCmd(eb.ModuleBasics),
-		AddGenesisAccountCmd(eb.DefaultNodeHome),
+		genutilcli.InitCmd(ebapp.ModuleBasics, ebapp.DefaultNodeHome),
+		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, ebapp.DefaultNodeHome),
+		genutilcli.GenTxCmd(ebapp.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, ebapp.DefaultNodeHome),
+		genutilcli.ValidateGenesisCmd(ebapp.ModuleBasics),
+		AddGenesisAccountCmd(ebapp.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
-		testnetCmd(eb.ModuleBasics, banktypes.GenesisBalancesIterator{}),
+		testnetCmd(ebapp.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
 		config.Cmd(),
 	)
@@ -113,14 +113,14 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	ac := appCreator{
 		encCfg: encodingConfig,
 	}
-	server.AddCommands(rootCmd, eb.DefaultNodeHome, ac.newApp, ac.appExport, addModuleInitFlags)
+	server.AddCommands(rootCmd, ebapp.DefaultNodeHome, ac.newApp, ac.appExport, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
 		queryCommand(),
 		txCommand(),
-		keys.Commands(eb.DefaultNodeHome),
+		keys.Commands(ebapp.DefaultNodeHome),
 	)
 }
 
@@ -146,7 +146,7 @@ func queryCommand() *cobra.Command {
 		authcmd.QueryTxCmd(),
 	)
 
-	eb.ModuleBasics.AddQueryCommands(cmd)
+	ebapp.ModuleBasics.AddQueryCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -173,7 +173,7 @@ func txCommand() *cobra.Command {
 		authcmd.GetDecodeCommand(),
 	)
 
-	eb.ModuleBasics.AddTxCommands(cmd)
+	ebapp.ModuleBasics.AddTxCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -215,7 +215,7 @@ func (ac appCreator) newApp(
 		panic(err)
 	}
 
-	return eb.NewEthereumbridgeApp(
+	return ebapp.NewEthereumbridgeApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
@@ -254,7 +254,7 @@ func (ac appCreator) appExport(
 		loadLatest = true
 	}
 
-	EthereumbridgeApp := eb.NewEthereumbridgeApp(
+	EthereumbridgeApp := ebapp.NewEthereumbridgeApp(
 		logger,
 		db,
 		traceStore,

@@ -168,8 +168,8 @@ var (
 )
 
 var (
-	_ simapp.App              = (*EtherumbridgeApp)(nil)
-	_ servertypes.Application = (*EtherumbridgeApp)(nil)
+	_ simapp.App              = (*EthereumbridgeApp)(nil)
+	_ servertypes.Application = (*EthereumbridgeApp)(nil)
 )
 
 // EthereumbridgeApp extends an ABCI application, but with most of its parameters exported.
