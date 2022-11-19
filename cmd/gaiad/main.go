@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	app "github.com/pumpkinzomb/cosmos-ethereum-bridge/etherbridge/app"
-	cmd "github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/ebd/cmd"
+	app "github.com/pumpkinzomb/cosmos-ethereum-bridge/gaia/app"
+	cmd "github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/gaiad/cmd"
 )
 
 func main() {
