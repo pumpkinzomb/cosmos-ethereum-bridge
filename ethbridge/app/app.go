@@ -108,7 +108,7 @@ import (
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v2/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v2/router/types"
 
-	gaiaante "github.com/pumpkinzomb/cosmos-ethereum-bridge/ante"
+	ebante "github.com/pumpkinzomb/cosmos-ethereum-bridge/ante"
 	ebappparams "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app/params"
 
 	// unnamed import of statik for swagger UI support
@@ -602,8 +602,8 @@ func NewEthereumbridgeApp(
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 
-	anteHandler, err := gaiaante.NewAnteHandler(
-		gaiaante.HandlerOptions{
+	anteHandler, err := ebante.NewAnteHandler(
+		ebante.HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
 				AccountKeeper:   app.AccountKeeper,
 				BankKeeper:      app.BankKeeper,
@@ -612,7 +612,7 @@ func NewEthereumbridgeApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCkeeper:            app.IBCKeeper,
-			BypassMinFeeMsgTypes: cast.ToStringSlice(appOpts.Get(gaiaappparams.BypassMinFeeMsgTypesKey)),
+			BypassMinFeeMsgTypes: cast.ToStringSlice(appOpts.Get(ebappparams.BypassMinFeeMsgTypesKey)),
 		},
 	)
 	if err != nil {
