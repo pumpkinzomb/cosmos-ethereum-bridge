@@ -12,16 +12,16 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	gaiaapp "github.com/pumpkinzomb/cosmos-ethereum-bridge/gaia/app"
+	ebapp "github.com/pumpkinzomb/cosmos-ethereum-bridge/ethbridge/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation
 const (
-	SimAppChainID = "gaia-app"
+	SimAppChainID = "ethereumbridge-app"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used
-// in GaiaApp testing.
+// in EthereumbridgeApp testing.
 var DefaultConsensusParams = &abci.ConsensusParams{
 	Block: &abci.BlockParams{
 		MaxBytes: 200000,
@@ -43,7 +43,7 @@ type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(o string) interface{} { return nil }
 
-func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *gaiaapp.GaiaApp {
+func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *ebapp.EthereumbridgeApp {
 	t.Helper()
 
 	app, genesisState := setup(!isCheckTx, invCheckPeriod)
@@ -65,23 +65,23 @@ func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *gaiaapp.GaiaApp {
 	return app
 }
 
-func setup(withGenesis bool, invCheckPeriod uint) (*gaiaapp.GaiaApp, gaiaapp.GenesisState) {
+func setup(withGenesis bool, invCheckPeriod uint) (*ebapp.EthereumbridgeApp, ebapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := gaiaapp.MakeEncodingConfig()
-	app := gaiaapp.NewGaiaApp(
+	encCdc := ebapp.MakeEncodingConfig()
+	app := ebapp.NewEthereumbridgeApp(
 		log.NewNopLogger(),
 		db,
 		nil,
 		true,
 		map[int64]bool{},
-		gaiaapp.DefaultNodeHome,
+		ebapp.DefaultNodeHome,
 		invCheckPeriod,
 		encCdc,
 		EmptyAppOptions{},
 	)
 	if withGenesis {
-		return app, gaiaapp.NewDefaultGenesisState()
+		return app, ebapp.NewDefaultGenesisState()
 	}
 
-	return app, gaiaapp.GenesisState{}
+	return app, ebapp.GenesisState{}
 }

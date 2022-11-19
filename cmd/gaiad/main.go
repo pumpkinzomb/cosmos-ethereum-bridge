@@ -7,7 +7,7 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
 	app "github.com/pumpkinzomb/cosmos-ethereum-bridge/gaia/app"
-	cmd "github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/gaiad/cmd"
+	"github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/gaiad/cmd"
 )
 
 func main() {

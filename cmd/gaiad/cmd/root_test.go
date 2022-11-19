@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
+	require "github.com/stretchr/testify/require"
 
 	app "github.com/pumpkinzomb/cosmos-ethereum-bridge/gaia/app"
 	cmd "github.com/pumpkinzomb/cosmos-ethereum-bridge/cmd/gaiad/cmd"
-	require "github.com/stretchr/testify/require"
 )
 
 func TestRootCmdConfig(t *testing.T) {
-
 	rootCmd, _ := cmd.NewRootCmd()
 	rootCmd.SetArgs([]string{
 		"config",          // Test the config cmd
