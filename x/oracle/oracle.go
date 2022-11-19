@@ -8,17 +8,19 @@ import (
 // DefaultConsensusNeeded is the default fraction of validators needed to make claims on a prophecy in order for it to pass
 const DefaultConsensusNeeded float64 = 0.7
 
+const (
+	ModuleName = "oracle"
+)
+
 type (
+
 	Keeper = keeper.Keeper
-
 	Prophecy = types.Prophecy
-
 	Status = types.Status
 )
 
 var (
 	NewKeeper = keeper.NewKeeper
-
 	NewProphecy = types.NewProphecy
 )
 

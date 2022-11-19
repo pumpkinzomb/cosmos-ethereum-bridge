@@ -5,10 +5,6 @@ import (
 	"github.com/pumpkinzomb/cosmos-ethereum-bridge/x/ethbridge/types"
 )
 
-type (
-	MsgMakeEthBridgeClaim = types.MsgMakeEthBridgeClaim
-)
-
 var (
 	NewMsgMakeEthBridgeClaim = types.NewMsgMakeEthBridgeClaim
 	NewEthBridgeClaim        = types.NewEthBridgeClaim

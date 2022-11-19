@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cosmos/cosmos-sdk/x/staking"
+	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
+	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 type GenesisAccount struct {
@@ -24,8 +24,10 @@ type GenesisAccount struct {
 	EndTime          int64     `json:"end_time"`          // vesting end time (UNIX Epoch time)
 }
 
+type GenesisState map[string]json.RawMessage
+
 // GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
-type GenesisState struct {
+type _GenesisState struct {
 	Accounts    []GenesisAccount     `json:"accounts"`
 	AuthData    auth.GenesisState    `json:"auth"`
 	BankData    bank.GenesisState    `json:"bank"`
@@ -34,45 +36,45 @@ type GenesisState struct {
 }
 
 // convert GenesisAccount to auth.BaseAccount
-func (ga *GenesisAccount) ToAccount() auth.Account {
-	bacc := &auth.BaseAccount{
-		Address:       ga.Address,
-		Coins:         ga.Coins.Sort(),
-		AccountNumber: ga.AccountNumber,
-		Sequence:      ga.Sequence,
-	}
+// func (ga *GenesisAccount) ToAccount() auth.AccountI {
+// 	bacc := &auth.BaseAccount{
+// 		Address:       ga.Address,
+// 		Coins:         ga.Coins.Sort(),
+// 		AccountNumber: ga.AccountNumber,
+// 		Sequence:      ga.Sequence,
+// 	}
 
-	if !ga.OriginalVesting.IsZero() {
-		baseVestingAcc := &auth.BaseVestingAccount{
-			BaseAccount:      bacc,
-			OriginalVesting:  ga.OriginalVesting,
-			DelegatedFree:    ga.DelegatedFree,
-			DelegatedVesting: ga.DelegatedVesting,
-			EndTime:          ga.EndTime,
-		}
+// 	if !ga.OriginalVesting.IsZero() {
+// 		baseVestingAcc := &auth.BaseVestingAccount{
+// 			BaseAccount:      bacc,
+// 			OriginalVesting:  ga.OriginalVesting,
+// 			DelegatedFree:    ga.DelegatedFree,
+// 			DelegatedVesting: ga.DelegatedVesting,
+// 			EndTime:          ga.EndTime,
+// 		}
 
-		if ga.StartTime != 0 && ga.EndTime != 0 {
-			return &auth.ContinuousVestingAccount{
-				BaseVestingAccount: baseVestingAcc,
-				StartTime:          ga.StartTime,
-			}
-		} else if ga.EndTime != 0 {
-			return &auth.DelayedVestingAccount{
-				BaseVestingAccount: baseVestingAcc,
-			}
-		} else {
-			panic(fmt.Sprintf("invalid genesis vesting account: %+v", ga))
-		}
-	}
+// 		if ga.StartTime != 0 && ga.EndTime != 0 {
+// 			return &auth.ContinuousVestingAccount{
+// 				BaseVestingAccount: baseVestingAcc,
+// 				StartTime:          ga.StartTime,
+// 			}
+// 		} else if ga.EndTime != 0 {
+// 			return &auth.DelayedVestingAccount{
+// 				BaseVestingAccount: baseVestingAcc,
+// 			}
+// 		} else {
+// 			panic(fmt.Sprintf("invalid genesis vesting account: %+v", ga))
+// 		}
+// 	}
 
-	return bacc
-}
+// 	return bacc
+// }
 
-func NewGenesisState(accounts []GenesisAccount, authData auth.GenesisState,
+func NewGenesisState(accounts auth.GenesisAccounts, authData auth.GenesisState,
 	bankData bank.GenesisState,
-	stakingData staking.GenesisState) GenesisState {
+	stakingData staking.GenesisState) _GenesisState {
 
-	return GenesisState{
+	return _GenesisState{
 		Accounts:    accounts,
 		AuthData:    authData,
 		BankData:    bankData,
@@ -82,14 +84,14 @@ func NewGenesisState(accounts []GenesisAccount, authData auth.GenesisState,
 
 func NewGenesisAccount(acc *auth.BaseAccount) GenesisAccount {
 	return GenesisAccount{
-		Address:       acc.Address,
-		Coins:         acc.Coins,
-		AccountNumber: acc.AccountNumber,
-		Sequence:      acc.Sequence,
+		Address:       acc.GetAddress(),
+		Coins:         acc.GetCoins(),
+		AccountNumber: acc.GetAccountNumber(),
+		Sequence:      acc.GetSequence(),
 	}
 }
 
-func NewGenesisAccountI(acc auth.Account) GenesisAccount {
+func NewGenesisAccountI(acc auth.AccountI) GenesisAccount {
 	gacc := GenesisAccount{
 		Address:       acc.GetAddress(),
 		Coins:         acc.GetCoins(),

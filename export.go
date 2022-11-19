@@ -6,12 +6,18 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtype "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktype "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // export the state of ebd for a genesis file
@@ -19,7 +25,7 @@ func (app *ethereumBridgeApp) ExportAppStateAndValidators(forZeroHeight bool, ja
 	appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 
 	// as if they could withdraw from the start of the next block
-	ctx := app.NewContext(true, abci.Header{Height: app.LastBlockHeight()})
+	ctx := app.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
 
 	if forZeroHeight {
 		app.prepForZeroHeightGenesis(ctx, jailWhiteList)
@@ -27,7 +33,7 @@ func (app *ethereumBridgeApp) ExportAppStateAndValidators(forZeroHeight bool, ja
 
 	// iterate to get the accounts
 	accounts := []GenesisAccount{}
-	appendAccount := func(acc auth.Account) (stop bool) {
+	appendAccount := func(acc authtype.AccountI) (stop bool) {
 		account := NewGenesisAccountI(acc)
 		accounts = append(accounts, account)
 		return false
@@ -36,15 +42,18 @@ func (app *ethereumBridgeApp) ExportAppStateAndValidators(forZeroHeight bool, ja
 
 	genState := NewGenesisState(
 		accounts,
-		auth.ExportGenesis(ctx, app.accountKeeper, app.feeCollectionKeeper),
-		bank.ExportGenesis(ctx, app.bankKeeper),
+		auth.ExportGenesis(ctx, app.accountKeeper),
+		app.bankKeeper.ExportGenesis(ctx),
 		staking.ExportGenesis(ctx, app.stakingKeeper),
 	)
-	appState, err = codec.MarshalJSONIndent(app.cdc, genState)
+	appState, err = codec.MarshalJSONIndent(app.legacyAmino, genState)
 	if err != nil {
 		return nil, nil, err
 	}
-	validators = staking.WriteValidators(ctx, app.stakingKeeper)
+	validators, err = staking.WriteValidators(ctx, app.stakingKeeper)
+	if err != nil {
+		return nil, nil, err
+	}
 	return appState, validators, nil
 }
 
@@ -77,7 +86,7 @@ func (app *ethereumBridgeApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhit
 	/* Handle staking state. */
 
 	// iterate through redelegations, reset creation height
-	app.stakingKeeper.IterateRedelegations(ctx, func(_ int64, red staking.Redelegation) (stop bool) {
+	app.stakingKeeper.IterateRedelegations(ctx, func(_ int64, red stakingtype.Redelegation) (stop bool) {
 		for i := range red.Entries {
 			red.Entries[i].CreationHeight = 0
 		}
@@ -86,7 +95,7 @@ func (app *ethereumBridgeApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhit
 	})
 
 	// iterate through unbonding delegations, reset creation height
-	app.stakingKeeper.IterateUnbondingDelegations(ctx, func(_ int64, ubd staking.UnbondingDelegation) (stop bool) {
+	app.stakingKeeper.IterateUnbondingDelegations(ctx, func(_ int64, ubd stakingtype.UnbondingDelegation) (stop bool) {
 		for i := range ubd.Entries {
 			ubd.Entries[i].CreationHeight = 0
 		}
@@ -96,8 +105,8 @@ func (app *ethereumBridgeApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhit
 
 	// Iterate through validators by power descending, reset bond heights, and
 	// update bond intra-tx counters.
-	store := ctx.KVStore(app.keyStaking)
-	iter := sdk.KVStoreReversePrefixIterator(store, staking.ValidatorsKey)
+	store := ctx.KVStore(app.keys[stakingtype.StoreKey])
+	iter := sdk.KVStoreReversePrefixIterator(store, stakingtype.ValidatorsKey)
 	counter := int16(0)
 
 	var valConsAddrs []sdk.ConsAddress
@@ -109,7 +118,12 @@ func (app *ethereumBridgeApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhit
 		}
 
 		validator.UnbondingHeight = 0
-		valConsAddrs = append(valConsAddrs, validator.ConsAddress())
+		
+		consAddr, err := validator.GetConsAddr()
+		if err != nil {
+			panic(err)
+		}
+		valConsAddrs = append(valConsAddrs, consAddr)
 		if applyWhiteList && !whiteListMap[addr.String()] {
 			validator.Jailed = true
 		}
@@ -120,5 +134,8 @@ func (app *ethereumBridgeApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhit
 
 	iter.Close()
 
-	_ = app.stakingKeeper.ApplyAndReturnValidatorSetUpdates(ctx)
+	_, err := app.stakingKeeper.ApplyAndReturnValidatorSetUpdates(ctx)
+	if err != nil {
+		panic(err)
+	}
 }
