@@ -70,3 +70,41 @@ format:
 
 .PHONY: all build-linux install format lint \
 		    clean build \
+
+###############################################################################
+###                           Tests & Simulation                            ###
+###############################################################################
+
+test: test-unit
+test-all: test-unit test-race
+PACKAGES_UNIT=$(shell go list ./...)
+TEST_PACKAGES=./...
+TEST_TARGETS := test-unit test-unit-cover test-race
+
+# Test runs-specific rules. To add a new test target, just add
+# a new rule, customise ARGS or TEST_PACKAGES ad libitum, and
+# append the new rule to the TEST_TARGETS list.
+test-unit: ARGS=-timeout=10m -race
+test-unit: TEST_PACKAGES=$(PACKAGES_UNIT)
+
+test-race: ARGS=-race
+test-race: TEST_PACKAGES=$(PACKAGES_NOSIMULATION)
+$(TEST_TARGETS): run-tests
+
+test-unit-cover: ARGS=-timeout=10m -race -coverprofile=coverage.txt -covermode=atomic
+test-unit-cover: TEST_PACKAGES=$(PACKAGES_UNIT)
+
+run-tests:
+ifneq (,$(shell which tparse 2>/dev/null))
+	go test -mod=readonly -json $(ARGS) $(EXTRA_ARGS) $(TEST_PACKAGES) | tparse
+else
+	go test -mod=readonly $(ARGS)  $(EXTRA_ARGS) $(TEST_PACKAGES)
+endif
+
+test-rpc:
+	./scripts/integration-test-all.sh -t "rpc" -q 1 -z 1 -s 2 -m "rpc" -r "true"
+
+test-rpc-pending:
+	./scripts/integration-test-all.sh -t "pending" -q 1 -z 1 -s 2 -m "pending" -r "true"
+
+.PHONY: run-tests test test-all test-rpc $(TEST_TARGETS)
